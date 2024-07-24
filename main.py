@@ -1,12 +1,29 @@
 import sys
+from typing import Optional
 
+from PyQt6.QtGui import QPainter, QBrush, QColor
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QGridLayout, QVBoxLayout, QScrollArea, \
     QSpacerItem, QSizePolicy, QHBoxLayout
 
 
+class Card(QWidget):
+    def __init__(self, parent: Optional[QWidget] = None):
+        super().__init__(parent)
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        painter = QPainter(self)
+        rect = self.rect().adjusted(5, 5, -5, -5)
+        brush = QBrush()
+        brush.setColor(QColor('White'))
+        # brush.setStyle(Qt.BrushStyle.SolidPattern)
+        painter.setBrush(brush)
+        painter.drawRoundedRect(rect, 10.0, 10.0)
+
+
 class MainWindow(QMainWindow):
 
-    def __init__(self, numberOfWidgets=12, minWidth=180, aspectRatio=2/3):
+    def __init__(self, numberOfWidgets=6, minWidth=180, aspectRatio=2 / 3):
         super(MainWindow, self).__init__()
         self.setMinimumSize(800, 600)
         # self.showFullScreen()
@@ -24,24 +41,7 @@ class MainWindow(QMainWindow):
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
 
-        # maxCol = self.computeColoumnSize()
-        # row = 0
-        # widgetsPlaced = 0
-        # while widgetsPlaced < numberOfWidgets:
-        #     for col in range(maxCol):
-        #         button = QPushButton("Hello")
-        #         button.setMinimumWidth(self.minWidthOfWidgets)
-        #         button.setMinimumHeight(int(self.minWidthOfWidgets//aspectRatio))
-        #         # button.setStyleSheet("margin: 0px; padding: 0px;")
-        #         gridLayout.addWidget(button, row, col)
-        #         widgetsPlaced += 1
-        #         if widgetsPlaced >= numberOfWidgets:
-        #             break
-        #     row += 1
-
-        # gridLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding), row + 1, 0)
         self.addButtons()
-
         widget = QWidget()
         widget.setLayout(self.gridLayout)
         scroll_area.setWidget(widget)
@@ -63,20 +63,23 @@ class MainWindow(QMainWindow):
         widgetsPlaced = 0
         while widgetsPlaced < self.numOfWidgets:
             for col in range(maxCol):
-                button = QPushButton("Hello")
+                button = Card()
                 button.setMinimumWidth(self.minWidthOfWidgets)
-                button.setMinimumHeight(int(self.minWidthOfWidgets//self.aspectRat))
+                button.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
                 self.gridLayout.addWidget(button, row, col)
                 widgetsPlaced += 1
                 if widgetsPlaced >= self.numOfWidgets:
                     break
             row += 1
-
+        if widgetsPlaced < maxCol:
+            # print("Added a horizontal spacer")
+            self.gridLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum), 0,
+                                    widgetsPlaced)
         self.gridLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding), row + 1, 0)
 
     def computeColoumnSize(self):
         width = self.rect().width()
-        numCol = width//self.minWidthOfWidgets
+        numCol = width // self.minWidthOfWidgets
         return numCol if numCol > 0 else 1
 
     def resizeEvent(self, event):
@@ -93,10 +96,11 @@ class MainWindow(QMainWindow):
         # Add the buttons again
         self.addButtons()
 
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    window = MainWindow(12)
+    window = MainWindow(6)
     window.show()
 
     app.exec()
