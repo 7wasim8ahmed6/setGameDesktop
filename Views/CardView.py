@@ -1,12 +1,13 @@
 from enum import Enum
 from typing import Optional
 
-from PyQt6.QtCore import QRect, QSize, Qt, QPointF
+from PyQt6.QtCore import QRect, QSize, Qt, QPointF, pyqtSignal, QObject
 from PyQt6.QtGui import QPainter, QBrush, QColor, QPen, QPainterPath
 from PyQt6.QtWidgets import QWidget, QStyleOption, QStyle
 
 
 class CardView(QWidget):
+    onTapGesture = pyqtSignal(QObject)
     class Shape(Enum):
         OVAL = 1
         DIAMOND = 2
@@ -28,7 +29,7 @@ class CardView(QWidget):
         GREEN = 3
 
     def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.OPEN, number=Numbers.ONE,
-                 color=Color.PURPLE):
+                 color=Color.GREEN):
         super().__init__(parent)
         self.shape = shape
         self.filling = filling
@@ -59,6 +60,11 @@ class CardView(QWidget):
         rect3 = QRect(rect2)
         rect3.translate(0, segWidth)
         return [rect, rect2, rect3]
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.onTapGesture.emit(self)  # Emit the custom signal
+        super().mousePressEvent(event)
 
     def __getDoubleRects(self, cardRect: QRect) -> [QRect]:
         rect, segWidth = self.__getSegmentRect(cardRect)
@@ -108,7 +114,7 @@ class CardView(QWidget):
     def select(self):
         self.setStyleSheet("""
                                 CardView {
-                                    background-color: lavender;
+                                    background-color: lightsteelblue;
                                     border: 2px solid black;
                                     border-radius: 15px;
                                 }

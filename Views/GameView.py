@@ -6,7 +6,7 @@ from Views.CardView import CardView
 
 
 class GameWindow(QMainWindow):
-    def __init__(self, numberOfWidgets=12, minWidth=180, aspectRatio=2 / 3):
+    def __init__(self, numberOfWidgets=12, minWidth=200, aspectRatio=2 / 3):
         super(GameWindow, self).__init__()
         self.setMinimumSize(800, 600)
         self.numOfWidgets = numberOfWidgets
@@ -40,6 +40,9 @@ class GameWindow(QMainWindow):
         self.setWindowTitle("My App")
         # self.showFullScreen()
 
+    def onCustomSignalEmitted(self, card:CardView):
+        card.select()
+
     def addButtons(self):
         maxCol = self.computeColoumnSize()
         row = 0
@@ -49,6 +52,7 @@ class GameWindow(QMainWindow):
                 Card = CardView()
                 Card.setMinimumWidth(self.minWidthOfWidgets)
                 Card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
+                Card.onTapGesture.connect(self.onCustomSignalEmitted)
                 self.gridLayout.addWidget(Card, row, col)
                 widgetsPlaced += 1
                 if widgetsPlaced >= self.numOfWidgets:
