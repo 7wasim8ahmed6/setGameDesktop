@@ -47,6 +47,13 @@ class GameWindow(QMainWindow):
         while widgetsPlaced < self.numOfWidgets:
             for col in range(maxCol):
                 Card = CardView()
+                Card.setStyleSheet("""
+                        CardView {
+                            background-color: white;
+                            border: 2px solid black;
+                            border-radius: 15px;
+                        }
+                    """)
                 Card.setMinimumWidth(self.minWidthOfWidgets)
                 Card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
                 self.gridLayout.addWidget(Card, row, col)

@@ -3,7 +3,7 @@ from typing import Optional
 
 from PyQt6.QtCore import QRect, QSize, Qt, QPointF
 from PyQt6.QtGui import QPainter, QBrush, QColor, QPen, QPainterPath
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget, QStyleOption, QStyle
 
 
 class CardView(QWidget):
@@ -27,15 +27,15 @@ class CardView(QWidget):
         PURPLE = 2
         GREEN = 3
 
-    def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.SHADED, number=Numbers.THREE,
+    def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.STRIPED, number=Numbers.THREE,
                  color=Color.PURPLE):
         super().__init__(parent)
         self.shape = shape
         self.filling = filling
         self.numbers = number
         self.color = color
-        self.PAD = 5
-        self.SEGMENT_PAD = 4
+        self.PAD = 8
+        self.SEGMENT_PAD = 6
 
     def __getSegmentRect(self, cardRect: QRect) -> (QRect, int):
         segmentHt = cardRect.height() // 3
@@ -74,13 +74,14 @@ class CardView(QWidget):
         else:
             return self.__getTripleRects(cardRect)
 
-    def __fetchColor(self) ->QColor:
+    def __fetchColor(self) -> QColor:
         if self.color == CardView.Color.RED:
             return QColor("#ff0000")
         elif self.color == CardView.Color.GREEN:
             return QColor("#008000")
         else:
             return QColor("#800080")
+
     def __fetchPen(self) -> QPen:
         pen = QPen()
         pen.setWidth(2)
@@ -96,14 +97,18 @@ class CardView(QWidget):
         else:
             brush.setStyle(Qt.BrushStyle.BDiagPattern)
         return brush
+
     def paintEvent(self, event):
         super().paintEvent(event)
         painter = QPainter(self)
+        opt = QStyleOption()
+        opt.initFrom(self)
+        self.style().drawPrimitive(QStyle.PrimitiveElement.PE_Widget, opt, painter, self)
 
         # Draw the white background
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         rect = self.rect().adjusted(self.PAD, self.PAD, -self.PAD, -self.PAD)
-        painter.fillRect(rect, QBrush(QColor('White')))
+        # painter.fillRect(rect, QBrush(QColor('White')))
 
         # Draw the non-filled rectangles
         painter.setPen(self.__fetchPen())
