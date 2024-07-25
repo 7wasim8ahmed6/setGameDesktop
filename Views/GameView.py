@@ -12,6 +12,13 @@ class GameWindow(QMainWindow):
         self.numOfWidgets = numberOfWidgets
         self.minWidthOfWidgets = minWidth
         self.aspectRat = aspectRatio
+        self.cards = []
+        for i in range(numberOfWidgets):
+            card = CardView()
+            card.setMinimumWidth(self.minWidthOfWidgets)
+            card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
+            card.onTapGesture.connect(self.onCustomSignalEmitted)
+            self.cards.append(card)
 
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -49,11 +56,7 @@ class GameWindow(QMainWindow):
         widgetsPlaced = 0
         while widgetsPlaced < self.numOfWidgets:
             for col in range(maxCol):
-                Card = CardView()
-                Card.setMinimumWidth(self.minWidthOfWidgets)
-                Card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
-                Card.onTapGesture.connect(self.onCustomSignalEmitted)
-                self.gridLayout.addWidget(Card, row, col)
+                self.gridLayout.addWidget(self.cards[widgetsPlaced], row, col)
                 widgetsPlaced += 1
                 if widgetsPlaced >= self.numOfWidgets:
                     break
@@ -78,7 +81,8 @@ class GameWindow(QMainWindow):
         while self.gridLayout.count():
             child = self.gridLayout.takeAt(0)
             if child.widget():
-                child.widget().deleteLater()
+                # child.widget().deleteLater()
+                self.gridLayout.removeWidget(child.widget())
 
         # Add the buttons again
         self.addButtons()
