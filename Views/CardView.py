@@ -1,13 +1,39 @@
+from enum import Enum
 from typing import Optional
 
-from PyQt6.QtCore import QRect, QSize, Qt
-from PyQt6.QtGui import QPainter, QBrush, QColor, QPen
+from PyQt6.QtCore import QRect, QSize, Qt, QPointF
+from PyQt6.QtGui import QPainter, QBrush, QColor, QPen, QPainterPath
 from PyQt6.QtWidgets import QWidget
 
 
 class CardView(QWidget):
-    def __init__(self, parent: Optional[QWidget] = None):
+    class Shape(Enum):
+        OVAL = 1
+        DIAMOND = 2
+        SQUIGGLE = 3
+
+    class Filling(Enum):
+        OPEN = 1
+        SHADED = 2
+        STRIPED = 3
+
+    class Numbers(Enum):
+        ONE = 1
+        TWO = 2
+        THREE = 3
+
+    class Color(Enum):
+        RED = 1
+        PURPLE = 2
+        GREEN = 3
+
+    def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.SHADED, number=Numbers.THREE,
+                 color=Color.PURPLE):
         super().__init__(parent)
+        self.shape = shape
+        self.filling = filling
+        self.numbers = number
+        self.color = color
         self.PAD = 5
         self.SEGMENT_PAD = 4
 
@@ -28,7 +54,7 @@ class CardView(QWidget):
 
     def __getDoubleRects(self, cardRect: QRect) -> [QRect]:
         rect, segWidth = self.__getSegmentRect(cardRect)
-        rect.translate(0, segWidth//2)
+        rect.translate(0, segWidth // 2)
         rect2 = QRect(rect)
         rect2.translate(0, segWidth)
         return [rect, rect2]
@@ -38,18 +64,38 @@ class CardView(QWidget):
         rect.translate(0, segWidth)
         return rect
 
-    def _getRects(self, cardRect: QRect, number: int) -> [QRect]:
-        if number > 3 or number < 1:
-            return []
-        if number == 1:
+    def __getRects(self, cardRect: QRect) -> [QRect]:
+        if self.numbers == CardView.Numbers.ONE:
             rectList = []
             rectList.append(self.__getSingleRect(cardRect))
             return rectList
-        if number == 2:
+        elif self.numbers == CardView.Numbers.TWO:
             return self.__getDoubleRects(cardRect)
-        if number == 3:
+        else:
             return self.__getTripleRects(cardRect)
 
+    def __fetchColor(self) ->QColor:
+        if self.color == CardView.Color.RED:
+            return QColor("#ff0000")
+        elif self.color == CardView.Color.GREEN:
+            return QColor("#008000")
+        else:
+            return QColor("#800080")
+    def __fetchPen(self) -> QPen:
+        pen = QPen()
+        pen.setWidth(2)
+        pen.setColor(self.__fetchColor())
+        return pen
+
+    def __fetchBrush(self) -> QBrush:
+        brush = QBrush(self.__fetchColor())
+        if self.filling == CardView.Filling.OPEN:
+            brush.setStyle(Qt.BrushStyle.NoBrush)
+        elif self.filling == CardView.Filling.SHADED:
+            brush.setStyle(Qt.BrushStyle.SolidPattern)
+        else:
+            brush.setStyle(Qt.BrushStyle.BDiagPattern)
+        return brush
     def paintEvent(self, event):
         super().paintEvent(event)
         painter = QPainter(self)
@@ -60,10 +106,42 @@ class CardView(QWidget):
         painter.fillRect(rect, QBrush(QColor('White')))
 
         # Draw the non-filled rectangles
-        pen = QPen()
-        pen.setWidth(2)
-        pen.setColor(QColor("Red"))
-        painter.setPen(pen)
-        # brush = QBrush(QColor("Red"), Qt.BrushStyle.HorPattern)
-        # painter.setBrush(brush)
-        painter.drawRects(self._getRects(rect, 3))
+        painter.setPen(self.__fetchPen())
+        painter.setBrush(self.__fetchBrush())
+        if self.shape == CardView.Shape.OVAL:
+            for seg_rect in self.__getRects(rect):
+                painter.drawEllipse(seg_rect)
+        elif self.shape == CardView.Shape.DIAMOND:
+            for seg_rect in self.__getRects(rect):
+                path = QPainterPath()
+                points = [
+                    QPointF(seg_rect.center().x(), seg_rect.top()),
+                    QPointF(seg_rect.right(), seg_rect.center().y()),
+                    QPointF(seg_rect.center().x(), seg_rect.bottom()),
+                    QPointF(seg_rect.left(), seg_rect.center().y())
+                ]
+                path.moveTo(points[0])
+                for point in points[1:]:
+                    path.lineTo(point)
+                path.closeSubpath()
+                painter.drawPath(path)
+        else:
+            for seg_rect in self.__getRects(rect):
+                path = QPainterPath()
+                start_x = seg_rect.left()
+                start_y = seg_rect.center().y()
+                end_x = seg_rect.right()
+                end_y = seg_rect.center().y()
+                control1_x = seg_rect.left() + seg_rect.width() / 4
+                control1_y = seg_rect.top() - seg_rect.height() / 4
+                control2_x = seg_rect.left() + 3 * seg_rect.width() / 4
+                control2_y = seg_rect.bottom() + seg_rect.height() / 4
+                control3_x = seg_rect.left() + seg_rect.width() / 4
+                control3_y = seg_rect.bottom() + seg_rect.height() / 4
+                control4_x = seg_rect.left() + 3 * seg_rect.width() / 4
+                control4_y = seg_rect.top() - seg_rect.height() / 4
+
+                path.moveTo(start_x, start_y)
+                path.cubicTo(control1_x, control1_y, control2_x, control2_y, end_x, end_y)
+                path.cubicTo(control4_x, control4_y, control3_x, control3_y, start_x, start_y)
+                painter.drawPath(path)

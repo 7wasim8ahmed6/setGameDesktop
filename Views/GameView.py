@@ -46,10 +46,10 @@ class GameWindow(QMainWindow):
         widgetsPlaced = 0
         while widgetsPlaced < self.numOfWidgets:
             for col in range(maxCol):
-                button = CardView()
-                button.setMinimumWidth(self.minWidthOfWidgets)
-                button.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
-                self.gridLayout.addWidget(button, row, col)
+                Card = CardView()
+                Card.setMinimumWidth(self.minWidthOfWidgets)
+                Card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
+                self.gridLayout.addWidget(Card, row, col)
                 widgetsPlaced += 1
                 if widgetsPlaced >= self.numOfWidgets:
                     break
