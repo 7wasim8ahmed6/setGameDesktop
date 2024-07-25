@@ -37,6 +37,13 @@ class CardView(QWidget):
         self.PAD = 8
         self.SEGMENT_PAD = 6
         self.ImageOrientation = 15
+        self.setStyleSheet("""
+                                CardView {
+                                    background-color: mintcream;
+                                    border: 2px solid black;
+                                    border-radius: 15px;
+                                }
+                            """)
 
     def __getSegmentRect(self, cardRect: QRect) -> (QRect, int):
         segmentHt = cardRect.height() // 3
@@ -98,6 +105,23 @@ class CardView(QWidget):
         else:
             brush.setStyle(Qt.BrushStyle.BDiagPattern)
         return brush
+    def select(self):
+        self.setStyleSheet("""
+                                CardView {
+                                    background-color: lavender;
+                                    border: 2px solid black;
+                                    border-radius: 15px;
+                                }
+                            """)
+
+    def match(self):
+        self.setStyleSheet("""
+                                CardView {
+                                    background-color: yellowgreen;
+                                    border: 2px solid black;
+                                    border-radius: 15px;
+                                }
+                            """)
 
     def paintEvent(self, event):
         super().paintEvent(event)
