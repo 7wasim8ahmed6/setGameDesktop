@@ -28,6 +28,18 @@ class CardView(QWidget):
         PURPLE = 2
         GREEN = 3
 
+    COLOR_MAPPING = {
+        Color.RED: QColor("#ff0000"),
+        Color.GREEN: QColor("#008000"),
+        Color.PURPLE: QColor("#800080")
+    }
+
+    BRUSH_STYLE_MAPPING = {
+        Filling.OPEN: Qt.BrushStyle.NoBrush,
+        Filling.SHADED: Qt.BrushStyle.SolidPattern,
+        Filling.STRIPED: Qt.BrushStyle.BDiagPattern
+    }
+
     def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.OPEN, number=Numbers.ONE,
                  color=Color.GREEN):
         super().__init__(parent)
@@ -89,12 +101,7 @@ class CardView(QWidget):
             return self.__getTripleRects(cardRect)
 
     def __fetchColor(self) -> QColor:
-        if self.color == CardView.Color.RED:
-            return QColor("#ff0000")
-        elif self.color == CardView.Color.GREEN:
-            return QColor("#008000")
-        else:
-            return QColor("#800080")
+        return self.COLOR_MAPPING[self.color]
 
     def __fetchPen(self) -> QPen:
         pen = QPen()
@@ -104,13 +111,9 @@ class CardView(QWidget):
 
     def __fetchBrush(self) -> QBrush:
         brush = QBrush(self.__fetchColor())
-        if self.filling == CardView.Filling.OPEN:
-            brush.setStyle(Qt.BrushStyle.NoBrush)
-        elif self.filling == CardView.Filling.SHADED:
-            brush.setStyle(Qt.BrushStyle.SolidPattern)
-        else:
-            brush.setStyle(Qt.BrushStyle.BDiagPattern)
+        brush.setStyle(self.BRUSH_STYLE_MAPPING[self.filling])
         return brush
+
     def select(self):
         self.setStyleSheet("""
                                 CardView {
@@ -128,6 +131,42 @@ class CardView(QWidget):
                                     border-radius: 15px;
                                 }
                             """)
+
+    def drawShape(self, painter, seg_rect):
+        if self.shape == CardView.Shape.OVAL:
+            painter.drawEllipse(seg_rect)
+        elif self.shape == CardView.Shape.DIAMOND:
+            path = QPainterPath()
+            points = [
+                QPointF(seg_rect.center().x(), seg_rect.top()),
+                QPointF(seg_rect.right(), seg_rect.center().y()),
+                QPointF(seg_rect.center().x(), seg_rect.bottom()),
+                QPointF(seg_rect.left(), seg_rect.center().y())
+            ]
+            path.moveTo(points[0])
+            for point in points[1:]:
+                path.lineTo(point)
+            path.closeSubpath()
+            painter.drawPath(path)
+        elif self.shape == CardView.Shape.SQUIGGLE:
+            path = QPainterPath()
+            start_x = seg_rect.left()
+            start_y = seg_rect.center().y()
+            end_x = seg_rect.right()
+            end_y = seg_rect.center().y()
+            control1_x = seg_rect.left() + seg_rect.width() / 4
+            control1_y = seg_rect.top() - seg_rect.height() / 4
+            control2_x = seg_rect.left() + 3 * seg_rect.width() / 4
+            control2_y = seg_rect.bottom() + seg_rect.height() / 4
+            control3_x = seg_rect.left() + seg_rect.width() / 4
+            control3_y = seg_rect.bottom() + seg_rect.height() / 4
+            control4_x = seg_rect.left() + 3 * seg_rect.width() / 4
+            control4_y = seg_rect.top() - seg_rect.height() / 4
+
+            path.moveTo(start_x, start_y)
+            path.cubicTo(control1_x, control1_y, control2_x, control2_y, end_x, end_y)
+            path.cubicTo(control4_x, control4_y, control3_x, control3_y, start_x, start_y)
+            painter.drawPath(path)
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -150,40 +189,5 @@ class CardView(QWidget):
             painter.translate(seg_rect.center())
             painter.rotate(self.ImageOrientation)
             painter.translate(-seg_rect.center())
-
-            if self.shape == CardView.Shape.OVAL:
-                painter.drawEllipse(seg_rect)
-            elif self.shape == CardView.Shape.DIAMOND:
-                path = QPainterPath()
-                points = [
-                    QPointF(seg_rect.center().x(), seg_rect.top()),
-                    QPointF(seg_rect.right(), seg_rect.center().y()),
-                    QPointF(seg_rect.center().x(), seg_rect.bottom()),
-                    QPointF(seg_rect.left(), seg_rect.center().y())
-                ]
-                path.moveTo(points[0])
-                for point in points[1:]:
-                    path.lineTo(point)
-                path.closeSubpath()
-                painter.drawPath(path)
-            elif self.shape == CardView.Shape.SQUIGGLE:
-                path = QPainterPath()
-                start_x = seg_rect.left()
-                start_y = seg_rect.center().y()
-                end_x = seg_rect.right()
-                end_y = seg_rect.center().y()
-                control1_x = seg_rect.left() + seg_rect.width() / 4
-                control1_y = seg_rect.top() - seg_rect.height() / 4
-                control2_x = seg_rect.left() + 3 * seg_rect.width() / 4
-                control2_y = seg_rect.bottom() + seg_rect.height() / 4
-                control3_x = seg_rect.left() + seg_rect.width() / 4
-                control3_y = seg_rect.bottom() + seg_rect.height() / 4
-                control4_x = seg_rect.left() + 3 * seg_rect.width() / 4
-                control4_y = seg_rect.top() - seg_rect.height() / 4
-
-                path.moveTo(start_x, start_y)
-                path.cubicTo(control1_x, control1_y, control2_x, control2_y, end_x, end_y)
-                path.cubicTo(control4_x, control4_y, control3_x, control3_y, start_x, start_y)
-                painter.drawPath(path)
-
+            self.drawShape(painter, seg_rect)
             painter.restore()
