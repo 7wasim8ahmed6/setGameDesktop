@@ -13,12 +13,7 @@ class GameWindow(QMainWindow):
         self.minWidthOfWidgets = minWidth
         self.aspectRat = aspectRatio
         self.cards = []
-        for i in range(numberOfWidgets):
-            card = CardView()
-            card.setMinimumWidth(self.minWidthOfWidgets)
-            card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
-            card.onTapGesture.connect(self.onCustomSignalEmitted)
-            self.cards.append(card)
+        self._initCards()
 
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -47,6 +42,13 @@ class GameWindow(QMainWindow):
         self.setWindowTitle("My App")
         # self.showFullScreen()
 
+    def _initCards(self):
+        for i in range(self.numOfWidgets):
+            card = CardView()
+            card.setMinimumWidth(self.minWidthOfWidgets)
+            card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
+            card.onTapGesture.connect(self.onCustomSignalEmitted)
+            self.cards.append(card)
     def onCustomSignalEmitted(self, card:CardView):
         card.select()
 
