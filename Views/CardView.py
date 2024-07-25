@@ -27,7 +27,7 @@ class CardView(QWidget):
         PURPLE = 2
         GREEN = 3
 
-    def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.STRIPED, number=Numbers.THREE,
+    def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.OPEN, number=Numbers.ONE,
                  color=Color.PURPLE):
         super().__init__(parent)
         self.shape = shape
@@ -36,6 +36,7 @@ class CardView(QWidget):
         self.color = color
         self.PAD = 8
         self.SEGMENT_PAD = 6
+        self.ImageOrientation = 15
 
     def __getSegmentRect(self, cardRect: QRect) -> (QRect, int):
         segmentHt = cardRect.height() // 3
@@ -113,11 +114,16 @@ class CardView(QWidget):
         # Draw the non-filled rectangles
         painter.setPen(self.__fetchPen())
         painter.setBrush(self.__fetchBrush())
-        if self.shape == CardView.Shape.OVAL:
-            for seg_rect in self.__getRects(rect):
+        # Draw each shape with rotation
+        for seg_rect in self.__getRects(rect):
+            painter.save()
+            painter.translate(seg_rect.center())
+            painter.rotate(self.ImageOrientation)
+            painter.translate(-seg_rect.center())
+
+            if self.shape == CardView.Shape.OVAL:
                 painter.drawEllipse(seg_rect)
-        elif self.shape == CardView.Shape.DIAMOND:
-            for seg_rect in self.__getRects(rect):
+            elif self.shape == CardView.Shape.DIAMOND:
                 path = QPainterPath()
                 points = [
                     QPointF(seg_rect.center().x(), seg_rect.top()),
@@ -130,8 +136,7 @@ class CardView(QWidget):
                     path.lineTo(point)
                 path.closeSubpath()
                 painter.drawPath(path)
-        else:
-            for seg_rect in self.__getRects(rect):
+            elif self.shape == CardView.Shape.SQUIGGLE:
                 path = QPainterPath()
                 start_x = seg_rect.left()
                 start_y = seg_rect.center().y()
@@ -150,3 +155,5 @@ class CardView(QWidget):
                 path.cubicTo(control1_x, control1_y, control2_x, control2_y, end_x, end_y)
                 path.cubicTo(control4_x, control4_y, control3_x, control3_y, start_x, start_y)
                 painter.drawPath(path)
+
+            painter.restore()
