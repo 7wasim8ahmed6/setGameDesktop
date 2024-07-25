@@ -1,6 +1,6 @@
 from typing import Optional
 
-from PyQt6.QtCore import Qt, QRect, QSize
+from PyQt6.QtCore import QRect, QSize, Qt
 from PyQt6.QtGui import QPainter, QBrush, QColor, QPen
 from PyQt6.QtWidgets import QWidget
 
@@ -8,6 +8,47 @@ from PyQt6.QtWidgets import QWidget
 class CardView(QWidget):
     def __init__(self, parent: Optional[QWidget] = None):
         super().__init__(parent)
+        self.PAD = 5
+        self.SEGMENT_PAD = 4
+
+    def __getSegmentRect(self, cardRect: QRect) -> (QRect, int):
+        segmentHt = cardRect.height() // 3
+        return QRect(cardRect.topLeft(), QSize(cardRect.width(), segmentHt)).adjusted(self.SEGMENT_PAD,
+                                                                                      self.SEGMENT_PAD,
+                                                                                      -self.SEGMENT_PAD,
+                                                                                      -self.SEGMENT_PAD), segmentHt
+
+    def __getTripleRects(self, cardRect: QRect) -> [QRect]:
+        rect, segWidth = self.__getSegmentRect(cardRect)
+        rect2 = QRect(rect)
+        rect2.translate(0, segWidth)
+        rect3 = QRect(rect2)
+        rect3.translate(0, segWidth)
+        return [rect, rect2, rect3]
+
+    def __getDoubleRects(self, cardRect: QRect) -> [QRect]:
+        rect, segWidth = self.__getSegmentRect(cardRect)
+        rect.translate(0, segWidth//2)
+        rect2 = QRect(rect)
+        rect2.translate(0, segWidth)
+        return [rect, rect2]
+
+    def __getSingleRect(self, cardRect: QRect) -> QRect:
+        rect, segWidth = self.__getSegmentRect(cardRect)
+        rect.translate(0, segWidth)
+        return rect
+
+    def _getRects(self, cardRect: QRect, number: int) -> [QRect]:
+        if number > 3 or number < 1:
+            return []
+        if number == 1:
+            rectList = []
+            rectList.append(self.__getSingleRect(cardRect))
+            return rectList
+        if number == 2:
+            return self.__getDoubleRects(cardRect)
+        if number == 3:
+            return self.__getTripleRects(cardRect)
 
     def paintEvent(self, event):
         super().paintEvent(event)
@@ -15,70 +56,14 @@ class CardView(QWidget):
 
         # Draw the white background
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        rect = self.rect().adjusted(5, 5, -5, -5)
+        rect = self.rect().adjusted(self.PAD, self.PAD, -self.PAD, -self.PAD)
         painter.fillRect(rect, QBrush(QColor('White')))
 
         # Draw the non-filled rectangles
         pen = QPen()
         pen.setWidth(2)
-        painter.setPen(pen)
-
-        segmentHt = rect.height() // 3
-
-        brush = QBrush(QColor("Red"))
-        # First rectangle
-        newRect = QRect(rect.topLeft(), QSize(rect.width(), segmentHt)).adjusted(3, 3, -3, -3)
         pen.setColor(QColor("Red"))
         painter.setPen(pen)
-        painter.setBrush(brush)
-        painter.drawRect(newRect)
-
-        painter.setBrush(Qt.BrushStyle.HorPattern)
-        # Second rectangle
-        newRect2 = QRect(newRect)
-        newRect2.translate(0, segmentHt/2)
-        pen.setColor(QColor("Blue"))
-        painter.setPen(pen)
-        painter.drawRect(newRect2)
-
-        # Third rectangle
-        newRect3 = QRect(newRect2)
-        newRect3.translate(0, segmentHt)
-        pen.setColor(QColor("Green"))
-        painter.setPen(pen)
-        painter.drawRect(newRect3)
-
-    # def paintEvent(self, event):
-    #     super().paintEvent(event)
-    #     painter = QPainter(self)
-    #     rect = self.rect().adjusted(5, 5, -5, -5)
-    #     brush = QBrush()
-    #     brush.setColor(QColor('White'))
-    #     brush.setStyle(Qt.BrushStyle.SolidPattern)
-    #     painter.setBrush(brush)
-    #     painter.drawRoundedRect(rect, 10.0, 10.0)
-    #     segmentHt = rect.height() // 3
-    #     newRect = QRect(rect.topLeft(), QSize(rect.width(), segmentHt)).adjusted(3, 3, -3, -3)
-    #     newRect2 = QRect(newRect)
-    #     newRect2.translate(0, segmentHt)
-    #     newRect3 = QRect(newRect2)
-    #     newRect3.translate(0, segmentHt)
-    #     pen = QPen()
-    #     pen.setWidth(2)
-    #     pen.setColor(QColor("#EB5160"))
-    #     painter.setPen(pen)
-    #     painter.drawRect(newRect)
-    #     painter.drawRect(newRect2)
-    #     painter.drawRect(newRect3)
-    #     pen.setColor(QColor("#94EB52"))
-    #     painter.setPen(pen)
-    #     newRect4 = QRect(newRect)
-    #     newRect4.translate(0, segmentHt//2)
-    #     painter.drawRect(newRect4)
-    #     newRect5 = QRect(newRect4)
-    #     newRect5.translate(0, segmentHt)
-    #     painter.drawRect(newRect5)
-    #     pen.setColor(QColor("#3434FF"))
-    #     painter.setPen(pen)
-    #     newRect6 = QRect(newRect2)
-    #     painter.drawRect(newRect6)
+        # brush = QBrush(QColor("Red"), Qt.BrushStyle.HorPattern)
+        # painter.setBrush(brush)
+        painter.drawRects(self._getRects(rect, 3))
