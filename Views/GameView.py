@@ -5,7 +5,7 @@ from Views.CardView import CardView
 
 
 class GameWindow(QMainWindow):
-    def __init__(self, numberOfWidgets=12, minWidth=200, aspectRatio=2 / 3):
+    def __init__(self, numberOfWidgets=36, minWidth=200, aspectRatio=2 / 3):
         super(GameWindow, self).__init__()
         self.setMinimumSize(1300, 1000)
         self.numOfWidgets = numberOfWidgets
@@ -46,21 +46,20 @@ class GameWindow(QMainWindow):
     def createTopView(self):
         horLayout = QHBoxLayout()
 
+        # Points label
+        lblPoints = QLabel("Score: ")
+        self.pointsValue = QLabel("0")  # Placeholder for the points
+        horLayout.addWidget(lblPoints)
+        horLayout.addWidget(self.pointsValue)
+
+        # Spacer
+        horLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+
         # Time label
         lblTime = QLabel("Time: ")
         self.timeValue = QLabel("00:00")  # Placeholder for the timer
         horLayout.addWidget(lblTime)
         horLayout.addWidget(self.timeValue)
-
-        # Spacer
-        horLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
-
-        # Points label
-        lblPoints = QLabel("Points: ")
-        self.pointsValue = QLabel("0")  # Placeholder for the points
-        horLayout.addWidget(lblPoints)
-        horLayout.addWidget(self.pointsValue)
-
         return horLayout
 
     def _initCards(self):

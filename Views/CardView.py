@@ -40,8 +40,8 @@ class CardView(QWidget):
         Filling.STRIPED: Qt.BrushStyle.BDiagPattern
     }
 
-    def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.OPEN, number=Numbers.ONE,
-                 color=Color.GREEN):
+    def __init__(self, parent: Optional[QWidget] = None, shape=Shape.OVAL, filling=Filling.STRIPED, number=Numbers.THREE,
+                 color=Color.RED):
         super().__init__(parent)
         self.shape = shape
         self.filling = filling
