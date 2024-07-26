@@ -3,4 +3,10 @@
   <qresource prefix="stylesheets">
     <file alias="light_theme">stylesheets/light_theme.qss</file>
   </qresource>
+  <qresource prefix="icons">
+    <file alias="new">icons/new.png</file>
+    <file alias="exit">icons/exit.png</file>
+    <file alias="help">icons/help.png</file>
+    <file alias="flash32">icons/flash-card_32.png</file>
+  </qresource>
 </RCC>
