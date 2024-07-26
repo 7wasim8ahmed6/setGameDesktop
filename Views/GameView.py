@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QVBoxLayout, QScrollArea, \
+from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QVBoxLayout, QScrollArea, \
     QSpacerItem, QSizePolicy, QHBoxLayout, QLabel
 
 from Views.CardView import CardView
@@ -7,7 +7,7 @@ from Views.CardView import CardView
 class GameWindow(QMainWindow):
     def __init__(self, numberOfWidgets=12, minWidth=200, aspectRatio=2 / 3):
         super(GameWindow, self).__init__()
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(1300, 1000)
         self.numOfWidgets = numberOfWidgets
         self.minWidthOfWidgets = minWidth
         self.aspectRat = aspectRatio
@@ -38,10 +38,8 @@ class GameWindow(QMainWindow):
         horLayout = QHBoxLayout()
         horLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         pushButton = QPushButton("Hint?")
-        pushButton.setStyleSheet("padding: 15px;")
         horLayout.addWidget(pushButton)
         pushButton = QPushButton("Draw Cards")
-        pushButton.setStyleSheet("padding: 15px;")
         horLayout.addWidget(pushButton)
         return horLayout
 

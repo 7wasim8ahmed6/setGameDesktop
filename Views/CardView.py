@@ -1,13 +1,13 @@
 from enum import Enum
 from typing import Optional
 
-from PyQt6.QtCore import QRect, QSize, Qt, QPointF, pyqtSignal, QObject
-from PyQt6.QtGui import QPainter, QBrush, QColor, QPen, QPainterPath
-from PyQt6.QtWidgets import QWidget, QStyleOption, QStyle
+from PySide6.QtCore import QRect, QSize, Qt, QPointF, Signal, QObject
+from PySide6.QtGui import QPainter, QBrush, QColor, QPen, QPainterPath
+from PySide6.QtWidgets import QWidget, QStyleOption, QStyle
 
 
 class CardView(QWidget):
-    onTapGesture = pyqtSignal(QObject)
+    onTapGesture = Signal(QObject)
     class Shape(Enum):
         OVAL = 1
         DIAMOND = 2
@@ -50,13 +50,6 @@ class CardView(QWidget):
         self.PAD = 8
         self.SEGMENT_PAD = 6
         self.ImageOrientation = 15
-        self.setStyleSheet("""
-                                CardView {
-                                    background-color: mintcream;
-                                    border: 2px solid black;
-                                    border-radius: 15px;
-                                }
-                            """)
 
     def __getSegmentRect(self, cardRect: QRect) -> (QRect, int):
         segmentHt = cardRect.height() // 3
