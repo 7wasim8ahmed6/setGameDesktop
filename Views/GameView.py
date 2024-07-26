@@ -1,6 +1,5 @@
-
 from PyQt6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QVBoxLayout, QScrollArea, \
-    QSpacerItem, QSizePolicy, QHBoxLayout
+    QSpacerItem, QSizePolicy, QHBoxLayout, QLabel
 
 from Views.CardView import CardView
 
@@ -29,7 +28,13 @@ class GameWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(self.gridLayout)
         scroll_area.setWidget(widget)
+        verticalLayout.addLayout(self.createTopView())
         verticalLayout.addWidget(scroll_area)
+        verticalLayout.addLayout(self.createBottomView())
+        self.setWindowTitle("My App")
+        # self.showFullScreen()
+
+    def createBottomView(self):
         horLayout = QHBoxLayout()
         horLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         pushButton = QPushButton("Hint?")
@@ -38,9 +43,27 @@ class GameWindow(QMainWindow):
         pushButton = QPushButton("Draw Cards")
         pushButton.setStyleSheet("padding: 15px;")
         horLayout.addWidget(pushButton)
-        verticalLayout.addLayout(horLayout)
-        self.setWindowTitle("My App")
-        # self.showFullScreen()
+        return horLayout
+
+    def createTopView(self):
+        horLayout = QHBoxLayout()
+
+        # Time label
+        lblTime = QLabel("Time: ")
+        self.timeValue = QLabel("00:00")  # Placeholder for the timer
+        horLayout.addWidget(lblTime)
+        horLayout.addWidget(self.timeValue)
+
+        # Spacer
+        horLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+
+        # Points label
+        lblPoints = QLabel("Points: ")
+        self.pointsValue = QLabel("0")  # Placeholder for the points
+        horLayout.addWidget(lblPoints)
+        horLayout.addWidget(self.pointsValue)
+
+        return horLayout
 
     def _initCards(self):
         for i in range(self.numOfWidgets):
@@ -49,7 +72,8 @@ class GameWindow(QMainWindow):
             card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
             card.onTapGesture.connect(self.onCustomSignalEmitted)
             self.cards.append(card)
-    def onCustomSignalEmitted(self, card:CardView):
+
+    def onCustomSignalEmitted(self, card: CardView):
         card.select()
 
     def addButtons(self):
