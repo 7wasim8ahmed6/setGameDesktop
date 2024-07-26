@@ -1,7 +1,9 @@
+from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QVBoxLayout, QScrollArea, \
-    QSpacerItem, QSizePolicy, QHBoxLayout, QLabel
+    QSpacerItem, QSizePolicy, QHBoxLayout, QLabel, QMessageBox
 
 from Views.CardView import CardView
+import resources_rc
 
 
 class GameWindow(QMainWindow):
@@ -32,7 +34,45 @@ class GameWindow(QMainWindow):
         verticalLayout.addWidget(scroll_area)
         verticalLayout.addLayout(self.createBottomView())
         self.setWindowTitle("My App")
+        self.createMenu()
         # self.showFullScreen()
+
+    def createMenu(self):
+        # Create the menu bar
+        menuBar = self.menuBar()
+
+        # Create the File menu
+        fileMenu = menuBar.addMenu("File")
+        newGameAction = QAction("New Game", self)
+        newGameAction.setIcon(QIcon(':/icons/new'))
+        newGameAction.triggered.connect(self.newGame)
+        exitAction = QAction("Exit", self)
+        exitAction.setIcon(QIcon(':/icons/exit'))
+        exitAction.triggered.connect(self.exitGame)
+        fileMenu.addAction(newGameAction)
+        fileMenu.addAction(exitAction)
+
+        # Create the Help menu
+        helpMenu = menuBar.addMenu("Help")
+        helpAction = QAction("Help", self)
+        helpAction.setIcon(QIcon(':/icons/help'))
+        helpAction.triggered.connect(self.showHelp)
+        helpMenu.addAction(helpAction)
+
+    def newGame(self):
+        # Logic for starting a new game
+        print("New Game started")
+        # Reset the game state or implement the logic needed for a new game
+        # Example: self._initCards()
+
+    def exitGame(self):
+        # Logic for exiting the game
+        print("Exiting the game")
+        self.close()
+
+    def showHelp(self):
+        # Show a help message box
+        QMessageBox.information(self, "Help", "This is the help information for the game.This is the help information for the game.This is the help information for the game.")
 
     def createBottomView(self):
         horLayout = QHBoxLayout()
