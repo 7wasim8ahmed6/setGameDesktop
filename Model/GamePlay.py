@@ -1,5 +1,6 @@
 from itertools import product
 from random import shuffle
+from typing import Tuple, List
 
 from Model.Card import *
 
@@ -8,13 +9,13 @@ class GamePlay:
     def __init__(self):
         self.__cards = GamePlay.__createAllCards()
         shuffle(self.__cards)
-        self.__draw_cards = self.__cards[-12:]  # Take the last 12 cards
-        self.__cards = self.__cards[:-12]  # Remove the last 12 cards from __cards
-        self.__matched: list[Card] = []
-        self.__selected: list[Card] = []
+        self.__draw_cards: List[Card] = self.__cards[-12:]  # Take the last 12 cards
+        self.__cards: List[Card] = self.__cards[:-12]  # Remove the last 12 cards from __cards
+        self.__matched: List[Card] = []
+        self.__selected: List[Card] = []
 
     @staticmethod
-    def __createAllCards() -> [Card]:
+    def __createAllCards() -> List[Card]:
         shapes = list(Shape)
         numbers = list(Numbers)
         fillings = list(Filling)
@@ -25,24 +26,18 @@ class GamePlay:
             for idx, (shape, number, filling, color) in enumerate(product(shapes, numbers, fillings, colors), start=1)
         ]
 
-    def get_drawn_cards(self) -> [Card]:
+    def get_drawn_cards(self) -> List[Card]:
         return self.__draw_cards
 
-    def get_selected_cards(self) -> [Card]:
-        return self.__selected
-
-    def get_matched_cards(self) -> [Card]:
-        return self.__matched
-
     def draw_cards(self):
-        if self.__cards:
+        if len(self.__cards) >= 3:
             self.__draw_cards = self.__cards[-3:]  # Take the last 3 cards
             self.__cards = self.__cards[:-3]  # Remove the last 3 cards from __cards
 
     def choose(self, card: Card):
         pass
 
-    def makeMatch(self, card_a: Card, card_b: Card, card_c: Card) -> bool:
+    def __makeMatch(self, card_a: Card, card_b: Card, card_c: Card) -> bool:
         # Check if all three cards are different
         if card_a.id == card_b.id or card_b.id == card_c.id or card_c.id == card_a.id:
             return False
@@ -55,3 +50,67 @@ class GamePlay:
                 return False
 
         return True
+
+    def __is_card_matched(self, card: Card) -> bool:
+        return card in self.__matched
+
+    def __find_in_drawn(self, card):
+        for index, drawn_card in enumerate(self.__draw_cards):
+            if drawn_card.id == card.id:
+                return index
+        return None
+
+    def __choice_full_replace_drawn_cards(self):
+        if len(self.__selected) != 3:
+            return
+
+        if self.__selected[0] in self.__matched:
+            for card in self.__selected:
+                index_in_drawn = self.__find_in_drawn(card)
+                if index_in_drawn is not None:
+                    if self.__cards:
+                        new_card = self.__cards.pop()
+                        self.__draw_cards[index_in_drawn] = new_card
+                    else:
+                        self.__draw_cards.pop(index_in_drawn)
+
+            self.__selected.clear()
+            self.__matched.clear()
+
+    def has_set_available(self) -> Tuple[bool, List[Card]]:
+        size = len(self.__draw_cards)
+
+        if size < 3:
+            return False, []
+
+        for i in range(size):
+            for j in range(i + 1, size):
+                for k in range(j + 1, size):
+                    card1 = self.__draw_cards[i]
+                    card2 = self.__draw_cards[j]
+                    card3 = self.__draw_cards[k]
+
+                    # Skip cards that are already in __matched
+                    if any(matched_card.id in [card1.id, card2.id, card3.id] for matched_card in self.__matched):
+                        continue
+
+                    if self.__make_match(card1, card2, card3):
+                        return True, [card1, card2, card3]
+
+        return False, []
+
+    def provide_hint(self) -> Card:
+        set_available, hint_cards = self.has_set_available()
+        if set_available and hint_cards:
+            return hint_cards[0]  # Return the first card in the found set
+        return None
+
+    # def _is_matched_card_selected(self, selected_index: int) -> bool:
+    #     return any(matched_card.id == self.__draw_cards[selected_index].id for matched_card in self.__matched)
+
+    def _add_or_remove_choice(self, card: Card):
+        index = next((i for i, c in enumerate(self.__selected) if c.id == card.id), None)
+        if index is not None:
+            self.__selected.pop(index)
+        else:
+            self.__selected.append(card)
