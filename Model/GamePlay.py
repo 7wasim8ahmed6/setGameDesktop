@@ -4,6 +4,7 @@ from typing import Tuple, List, Optional
 
 from Model.Card import *
 from Model.Card import Card
+from Model.Score import Score
 
 
 class GamePlay:
@@ -15,6 +16,8 @@ class GamePlay:
         self.__matched: List[Card] = []
         self.__selected: List[Card] = []
         self.__game_completed = False
+        self.__score = Score()
+        self.__score.start_timer()
 
     @staticmethod
     def __createAllCards() -> List[Card]:
@@ -33,8 +36,14 @@ class GamePlay:
 
     def draw_cards(self):
         if len(self.__cards) >= 3:
-            self.__draw_cards = self.__cards[-3:]  # Take the last 3 cards
-            self.__cards = self.__cards[:-3]  # Remove the last 3 cards from __cards
+            isSetAvailable, _ = self.has_set_available()
+            if isSetAvailable:
+                self.__score.deduct()
+                if len(self.__selected) == 3:
+                    self.__choice_full_replace_drawn_cards()
+                else:
+                    self.__draw_cards = self.__cards[-3:]  # Take the last 3 cards
+                    self.__cards = self.__cards[:-3]  # Remove the last 3 cards from __cards
 
     def choose(self, card: Card):
         select_index = self.__find_in_drawn(card)
@@ -49,10 +58,12 @@ class GamePlay:
         self.__choice_full_replace_drawn_cards()
         self.__add_or_remove_choice(card)
         if self.__make_match():
+            self.__score.add_corrected_points()
             print(f"{self.__selected[0]},{self.__selected[1]} and {self.__selected[2]} make match")
             if len(self.__draw_cards) == 3:
                 self.__game_completed = True
         else:
+            self.__score.deduct()
             print(f"{self.__selected[0]},{self.__selected[1]} and {self.__selected[2]} make  no match")
 
     def is_game_completed(self):
@@ -139,6 +150,7 @@ class GamePlay:
     def provide_hint(self) -> Optional[Card]:
         set_available, hint_cards = self.has_set_available()
         if set_available and hint_cards:
+            self.__score.deduct()
             return hint_cards[0]  # Return the first card in the found set
         return None
 
