@@ -4,6 +4,7 @@ from PySide6.QtCore import QFile
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 import resources_rc
+from ModelView.CardGame import CardGame
 # pyside6-rcc resources.qrc -o resources_rc.py for compiling resource file
 # The below is for automatic compilation of resource file
 # D:\pythonWS\setGameDesktop
@@ -23,7 +24,8 @@ if __name__ == '__main__':
     else:
         print(f"Failed to load resource from {qrc_path}")
 
-    window = GameWindow()
+    theGame = CardGame()
+    window = GameWindow(theGame)
     window.show()
 
     app.exec()

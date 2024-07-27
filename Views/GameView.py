@@ -2,14 +2,15 @@ from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QVBoxLayout, QScrollArea, \
     QSpacerItem, QSizePolicy, QHBoxLayout, QLabel, QMessageBox
 
+from ModelView import CardGame
 from Views.CardView import CardView
-import resources_rc
 
 
 class GameWindow(QMainWindow):
-    def __init__(self, numberOfWidgets=36, minWidth=200, aspectRatio=2 / 3):
+    def __init__(self, theCardGame: CardGame, numberOfWidgets=36, minWidth=200, aspectRatio=2 / 3):
         super(GameWindow, self).__init__()
         self.setMinimumSize(1300, 1000)
+        self.cardGame = theCardGame
         self.numOfWidgets = numberOfWidgets
         self.minWidthOfWidgets = minWidth
         self.aspectRat = aspectRatio
@@ -72,7 +73,8 @@ class GameWindow(QMainWindow):
 
     def showHelp(self):
         # Show a help message box
-        QMessageBox.information(self, "Help", "This is the help information for the game.This is the help information for the game.This is the help information for the game.")
+        QMessageBox.information(self, "Help",
+                                "This is the help information for the game.This is the help information for the game.This is the help information for the game.")
 
     def createBottomView(self):
         horLayout = QHBoxLayout()
