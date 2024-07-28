@@ -2,8 +2,7 @@ from itertools import product
 from random import shuffle
 from typing import Tuple, List, Optional
 
-from Model.Card import *
-from Model.Card import Card
+from common.Card import *
 from Model.Score import Score
 
 
