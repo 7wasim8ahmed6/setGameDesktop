@@ -2,8 +2,8 @@ from itertools import product
 from random import shuffle
 from typing import Tuple, List, Optional
 
-from common.Card import *
 from Model.Score import Score
+from common.Card import *
 
 
 class GamePlay:
@@ -50,7 +50,7 @@ class GamePlay:
             print("selected card not in drawn cards")
             return
 
-        if self.__is_card_matched(card):
+        if self.is_card_matched(card):
             print("Matched card selected")
             return
 
@@ -94,9 +94,16 @@ class GamePlay:
 
         return False
 
-    def __is_card_matched(self, card: Card) -> bool:
+    def is_card_matched(self, card: Card) -> bool:
         for _, match_card in enumerate(self.__matched):
             if match_card.id == card.id:
+                return True
+
+        return False
+
+    def is_card_chosen(self, card: Card) -> bool:
+        for _, chosen_card in enumerate(self.__selected):
+            if chosen_card.id == card.id:
                 return True
 
         return False
@@ -111,7 +118,7 @@ class GamePlay:
         if len(self.__selected) != 3:
             return
 
-        if self.__is_card_matched(self.__selected[0]):
+        if self.is_card_matched(self.__selected[0]):
             for card in self.__selected:
                 index_in_drawn = self.__find_in_drawn(card)
                 if index_in_drawn is not None:
