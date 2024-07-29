@@ -9,16 +9,11 @@ class CardGame:
     def __init__(self):
         self.__theGame = GamePlay()
 
-    def get_draw_cards(self) -> List[CardViewV2]:
-        card_view_list = []
-        for card in self.__theGame.get_drawn_cards():
+    def get_draw_cards(self) -> List[Card]:
+        return self.__theGame.get_drawn_cards()
 
-            card_view_list.append(CardViewV2(card, None, self.__theGame.is_card_chosen(card),
-                                             self.__theGame.is_card_matched(card)))
+    def isCardSelected(self, card: Card):
+        return self.__theGame.is_card_chosen(card)
 
-        return card_view_list
-    def make_draw_get_cards(self) -> List[CardViewV2]:
-        self.__theGame.draw_cards()
-        return self.get_draw_cards()
-
-
+    def isCardMatched(self, card: Card):
+        return self.__theGame.is_card_matched(card)

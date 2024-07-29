@@ -4,17 +4,17 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QV
 
 from ModelView import CardGame
 from Views.CardView import CardView
+from Views.CardViewV2 import CardViewV2
 
 
 class GameWindow(QMainWindow):
-    def __init__(self, theCardGame: CardGame, numberOfWidgets=36, minWidth=200, aspectRatio=2 / 3):
+    def __init__(self, theCardGame: CardGame, minWidth=200, aspectRatio=2 / 3):
         super(GameWindow, self).__init__()
         self.setMinimumSize(1300, 1000)
         self.cardGame = theCardGame
-        self.numOfWidgets = numberOfWidgets
         self.minWidthOfWidgets = minWidth
         self.aspectRat = aspectRatio
-        self.cards = []
+        self.card_views = []
         self._initCards()
 
         self.central_widget = QWidget()
@@ -34,7 +34,7 @@ class GameWindow(QMainWindow):
         verticalLayout.addLayout(self.createTopView())
         verticalLayout.addWidget(scroll_area)
         verticalLayout.addLayout(self.createBottomView())
-        self.setWindowTitle("My App")
+        self.setWindowTitle("Sets")
         self.createMenu()
         # self.showFullScreen()
 
@@ -105,12 +105,12 @@ class GameWindow(QMainWindow):
         return horLayout
 
     def _initCards(self):
-        for i in range(self.numOfWidgets):
-            card = CardView()
-            card.setMinimumWidth(self.minWidthOfWidgets)
-            card.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
-            card.onTapGesture.connect(self.onCustomSignalEmitted)
-            self.cards.append(card)
+        for card in self.cardGame.get_draw_cards():
+            theCardView = CardViewV2(card)
+            theCardView.setMinimumWidth(self.minWidthOfWidgets)
+            theCardView.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
+            theCardView.onTapGesture.connect(self.onCustomSignalEmitted)
+            self.card_views.append(theCardView)
 
     def onCustomSignalEmitted(self, card: CardView):
         card.select()
@@ -119,11 +119,11 @@ class GameWindow(QMainWindow):
         maxCol = self.computeColoumnSize()
         row = 0
         widgetsPlaced = 0
-        while widgetsPlaced < self.numOfWidgets:
+        while widgetsPlaced < len(self.card_views):
             for col in range(maxCol):
-                self.gridLayout.addWidget(self.cards[widgetsPlaced], row, col)
+                self.gridLayout.addWidget(self.card_views[widgetsPlaced], row, col)
                 widgetsPlaced += 1
-                if widgetsPlaced >= self.numOfWidgets:
+                if widgetsPlaced >= len(self.card_views):
                     break
             row += 1
         if widgetsPlaced < maxCol:

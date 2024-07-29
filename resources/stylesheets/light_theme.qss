@@ -196,6 +196,12 @@ CardView {
     border-radius: 15px;
 }
 
+CardViewV2 {
+    background-color: mintcream;
+    border: 2px solid black;
+    border-radius: 15px;
+}
+
 /*-----QMenuBar-----*/
 QMenuBar {
     background-color: #38394e;
