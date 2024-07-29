@@ -32,6 +32,7 @@ class CardViewV2(QWidget):
         self.is_matched = isMatched
         self.setObjectName("CardViewV2")
 
+    def setBackgroundStyle(self):
         if self.is_selected:
             self.setStyleSheet("""
                                 CardViewV2 {
