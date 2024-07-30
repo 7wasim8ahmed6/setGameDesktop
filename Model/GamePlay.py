@@ -9,7 +9,7 @@ from common.Card import *
 class GamePlay:
     def __init__(self):
         self.__cards = GamePlay.__createAllCards()
-        shuffle(self.__cards)
+        # shuffle(self.__cards)
         self.__draw_cards: List[Card] = self.__cards[-12:]  # Take the last 12 cards
         self.__cards: List[Card] = self.__cards[:-12]  # Remove the last 12 cards from __cards
         self.__matched: List[Card] = []
@@ -46,7 +46,7 @@ class GamePlay:
 
     def choose(self, card: Card):
         select_index = self.__find_in_drawn(card)
-        if not select_index:
+        if select_index is None:
             print("selected card not in drawn cards")
             return
 
@@ -56,41 +56,39 @@ class GamePlay:
 
         self.__choice_full_replace_drawn_cards()
         self.__add_or_remove_choice(card)
-        if self.__make_match():
-            self.__score.add_corrected_points()
-            print(f"{self.__selected[0]},{self.__selected[1]} and {self.__selected[2]} make match")
-            if len(self.__draw_cards) == 3:
-                self.__game_completed = True
-        else:
-            self.__score.deduct()
-            print(f"{self.__selected[0]},{self.__selected[1]} and {self.__selected[2]} make  no match")
+        if len(self.__selected) == 3:
+            if self.__make_match():
+                self.__score.add_corrected_points()
+                print(f"{self.__selected[0]},{self.__selected[1]} and {self.__selected[2]} make match")
+                if len(self.__draw_cards) == 3:
+                    self.__game_completed = True
+            else:
+                self.__score.deduct()
+                print(f"{self.__selected[0]},{self.__selected[1]} and {self.__selected[2]} make  no match")
 
     def is_game_completed(self):
         return self.__game_completed
 
-    def __make_match(self, card_a: Card, card_b: Card, card_c: Card) -> bool:
-        # Check if all three cards are different
-        if card_a.id == card_b.id or card_b.id == card_c.id or card_c.id == card_a.id:
-            return False
-
-        # Check if all attributes are either all the same or all different
-        attributes = ['shape', 'color', 'filling', 'number']
-        for attr in attributes:
-            values = {getattr(card_a, attr), getattr(card_b, attr), getattr(card_c, attr)}
-            if len(values) == 2:  # If there are exactly two different values, it's not a match
+    def __make_match(self, card_a: Optional[Card] = None, card_b: Optional[Card] = None, card_c: Optional[Card] = None) -> bool:
+        if card_a and card_b and card_c:
+            # Check if all three cards are different
+            if card_a.id == card_b.id or card_b.id == card_c.id or card_c.id == card_a.id:
                 return False
 
-        return True
+            # Check if all attributes are either all the same or all different
+            attributes = ['shape', 'color', 'filling', 'number']
+            for attr in attributes:
+                values = {getattr(card_a, attr), getattr(card_b, attr), getattr(card_c, attr)}
+                if len(values) == 2:  # If there are exactly two different values, it's not a match
+                    return False
 
-    def __make_match(self) -> bool:
-        if len(self.__selected) != 3:
-            return False
-
-        if self.__make_match(self.__selected[0], self.__selected[1], self.__selected[2]):
-            self.__matched.append(self.__selected[0])
-            self.__matched.append(self.__selected[1])
-            self.__matched.append(self.__selected[2])
             return True
+        elif len(self.__selected) == 3:
+            if self.__make_match(self.__selected[0], self.__selected[1], self.__selected[2]):
+                self.__matched.append(self.__selected[0])
+                self.__matched.append(self.__selected[1])
+                self.__matched.append(self.__selected[2])
+                return True
 
         return False
 
