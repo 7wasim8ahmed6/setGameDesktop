@@ -32,6 +32,7 @@ class CardView(QWidget):
         self.is_matched = isMatched
         self.setObjectName("CardView")
         self.setMinimumSize(min_width, min_height)
+        self.setBackgroundStyle()
 
     def setBackgroundStyle(self):
         if self.is_selected:
@@ -67,7 +68,6 @@ class CardView(QWidget):
         # painter.fillRect(rect, QBrush(QColor('White')))
         painter.setPen(self.__fetchPen())
         painter.setBrush(self.__fetchBrush())
-        self.setBackgroundStyle()
 
         for seg_rect in self.__getRects(rect):
             painter.save()
