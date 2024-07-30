@@ -25,12 +25,13 @@ class CardView(QWidget):
         Filling.STRIPED: Qt.BrushStyle.BDiagPattern
     }
 
-    def __init__(self, card: Card, parent: Optional[QWidget] = None, isSelected=False, isMatched=False):
+    def __init__(self, card: Card, min_width, min_height, parent: Optional[QWidget] = None, isSelected=False, isMatched=False):
         super().__init__(parent)
         self.card = card
         self.is_selected = isSelected
         self.is_matched = isMatched
         self.setObjectName("CardViewV2")
+        self.setMinimumSize(min_width, min_height)
 
     def setBackgroundStyle(self):
         if self.is_selected:
