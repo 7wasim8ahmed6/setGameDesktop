@@ -17,3 +17,6 @@ class CardGame:
 
     def isCardMatched(self, card: Card):
         return self.__theGame.is_card_matched(card)
+
+    def choose(self, card):
+        self.__theGame.choose(card)

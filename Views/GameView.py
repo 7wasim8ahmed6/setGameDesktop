@@ -18,8 +18,8 @@ class GameWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
         vertical_layout = QVBoxLayout(self.central_widget)
         self.gridLayout = QGridLayout()
-        self.gridLayout.setSpacing(0)
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setSpacing(1)
+        self.gridLayout.setContentsMargins(2, 2, 2, 2)
 
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
@@ -102,13 +102,16 @@ class GameWindow(QMainWindow):
         return horLayout
 
     def onCustomSignalEmitted(self, card: CardView):
-        print("Card clicked")
+        self.cardGame.choose(card)
 
 
     def reinsert_card_views(self):
         card_views = []
         for card in self.cardGame.get_draw_cards():
-            theCardView = CardView(card, self.minWidthOfWidgets, int(self.minWidthOfWidgets // self.aspectRat))
+            is_selected = self.cardGame.isCardSelected(card)
+            is_matched = self.cardGame.isCardMatched(card)
+            theCardView = CardView(card, self.minWidthOfWidgets,
+                                   int(self.minWidthOfWidgets // self.aspectRat), None,  is_selected, is_matched)
             theCardView.onTapGesture.connect(self.onCustomSignalEmitted)
             card_views.append(theCardView)
 
