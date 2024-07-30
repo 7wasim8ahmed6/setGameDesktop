@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QV
     QSpacerItem, QSizePolicy, QHBoxLayout, QLabel, QMessageBox
 
 from ModelView import CardGame
-from Views.CardView import CardView
 from Views.CardViewV2 import CardViewV2
 
 
@@ -112,8 +111,9 @@ class GameWindow(QMainWindow):
             theCardView.onTapGesture.connect(self.onCustomSignalEmitted)
             self.card_views.append(theCardView)
 
-    def onCustomSignalEmitted(self, card: CardView):
-        card.select()
+    def onCustomSignalEmitted(self, card: CardViewV2):
+        print("Card clicked")
+
 
     def addButtons(self):
         maxCol = self.computeColoumnSize()
