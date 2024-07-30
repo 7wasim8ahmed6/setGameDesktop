@@ -7,18 +7,16 @@ from Views.CardView import CardView
 
 
 class GameWindow(QMainWindow):
-    def __init__(self, theCardGame: CardGame, minWidth=200, aspectRatio=2 / 3):
+    def __init__(self, the_card_game: CardGame, min_width=200, aspect_ratio=2 / 3):
         super(GameWindow, self).__init__()
         self.setMinimumSize(1300, 1000)
-        self.cardGame = theCardGame
-        self.minWidthOfWidgets = minWidth
-        self.aspectRat = aspectRatio
-        self.card_views = []
-        self._initCards()
+        self.cardGame = the_card_game
+        self.minWidthOfWidgets = min_width
+        self.aspectRat = aspect_ratio
 
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
-        verticalLayout = QVBoxLayout(self.central_widget)
+        vertical_layout = QVBoxLayout(self.central_widget)
         self.gridLayout = QGridLayout()
         self.gridLayout.setSpacing(0)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -26,13 +24,13 @@ class GameWindow(QMainWindow):
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
 
-        self.addButtons()
+        self.reinsert_card_views()
         widget = QWidget()
         widget.setLayout(self.gridLayout)
         scroll_area.setWidget(widget)
-        verticalLayout.addLayout(self.createTopView())
-        verticalLayout.addWidget(scroll_area)
-        verticalLayout.addLayout(self.createBottomView())
+        vertical_layout.addLayout(self.createTopView())
+        vertical_layout.addWidget(scroll_area)
+        vertical_layout.addLayout(self.createBottomView())
         self.setWindowTitle("Sets")
         self.createMenu()
         # self.showFullScreen()
@@ -103,27 +101,25 @@ class GameWindow(QMainWindow):
         horLayout.addWidget(self.timeValue)
         return horLayout
 
-    def _initCards(self):
-        for card in self.cardGame.get_draw_cards():
-            theCardView = CardView(card)
-            theCardView.setMinimumWidth(self.minWidthOfWidgets)
-            theCardView.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
-            theCardView.onTapGesture.connect(self.onCustomSignalEmitted)
-            self.card_views.append(theCardView)
-
     def onCustomSignalEmitted(self, card: CardView):
         print("Card clicked")
 
 
-    def addButtons(self):
+    def reinsert_card_views(self):
+        card_views = []
+        for card in self.cardGame.get_draw_cards():
+            theCardView = CardView(card, self.minWidthOfWidgets, int(self.minWidthOfWidgets // self.aspectRat))
+            theCardView.onTapGesture.connect(self.onCustomSignalEmitted)
+            card_views.append(theCardView)
+
         maxCol = self.computeColoumnSize()
         row = 0
         widgetsPlaced = 0
-        while widgetsPlaced < len(self.card_views):
+        while widgetsPlaced < len(card_views):
             for col in range(maxCol):
-                self.gridLayout.addWidget(self.card_views[widgetsPlaced], row, col)
+                self.gridLayout.addWidget(card_views[widgetsPlaced], row, col)
                 widgetsPlaced += 1
-                if widgetsPlaced >= len(self.card_views):
+                if widgetsPlaced >= len(card_views):
                     break
             row += 1
         if widgetsPlaced < maxCol:
@@ -146,8 +142,7 @@ class GameWindow(QMainWindow):
         while self.gridLayout.count():
             child = self.gridLayout.takeAt(0)
             if child.widget():
-                # child.widget().deleteLater()
-                self.gridLayout.removeWidget(child.widget())
+                child.widget().deleteLater()
 
         # Add the buttons again
-        self.addButtons()
+        self.reinsert_card_views()
