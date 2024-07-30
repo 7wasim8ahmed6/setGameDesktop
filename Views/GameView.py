@@ -4,15 +4,18 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QV
 
 from ModelView import CardGame
 from Views.CardView import CardView
+from common.Observer import Observer
 
 
-class GameWindow(QMainWindow):
+class GameWindow(QMainWindow, Observer):
     def __init__(self, the_card_game: CardGame, min_width=200, aspect_ratio=2 / 3):
-        super(GameWindow, self).__init__()
+        QMainWindow.__init__(self, parent=None)  # Initialize QMainWindow with GameWindow as parent
+        Observer.__init__(self)  # Initialize Observer without any arguments
         self.setMinimumSize(1300, 1000)
         self.cardGame = the_card_game
         self.minWidthOfWidgets = min_width
         self.aspectRat = aspect_ratio
+        self.cardGame.add_observer(self)
 
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -35,6 +38,8 @@ class GameWindow(QMainWindow):
         self.createMenu()
         # self.showFullScreen()
 
+    def update(self, observable, *args, **kwargs):
+        self.rearrangeButtons()
     def createMenu(self):
         # Create the menu bar
         menuBar = self.menuBar()
@@ -101,8 +106,8 @@ class GameWindow(QMainWindow):
         horLayout.addWidget(self.timeValue)
         return horLayout
 
-    def onCustomSignalEmitted(self, card: CardView):
-        self.cardGame.choose(card)
+    def onCustomSignalEmitted(self, card_view: CardView):
+        self.cardGame.choose(card_view.card)
 
 
     def reinsert_card_views(self):

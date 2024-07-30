@@ -3,10 +3,12 @@ from typing import List
 from Model.GamePlay import GamePlay
 from Views.CardView import CardView
 from common.Card import Card
+from common.Observable import Observable
 
 
-class CardGame:
+class CardGame(Observable):
     def __init__(self):
+        super().__init__()
         self.__theGame = GamePlay()
 
     def get_draw_cards(self) -> List[Card]:
@@ -20,3 +22,4 @@ class CardGame:
 
     def choose(self, card):
         self.__theGame.choose(card)
+        self.notify_observers()
