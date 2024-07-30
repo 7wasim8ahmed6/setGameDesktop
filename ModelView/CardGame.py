@@ -1,7 +1,7 @@
 from typing import List
 
 from Model.GamePlay import GamePlay
-from Views.CardViewV2 import CardViewV2
+from Views.CardView import CardView
 from common.Card import Card
 
 

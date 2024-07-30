@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QWidget, QStyleOption, QStyle
 from common.Card import *
 
 
-class CardViewV2(QWidget):
+class CardView(QWidget):
     onTapGesture = Signal(QObject)
     PADDING = 8
     SHAPE_PADDING = 6
@@ -66,6 +66,7 @@ class CardViewV2(QWidget):
         # painter.fillRect(rect, QBrush(QColor('White')))
         painter.setPen(self.__fetchPen())
         painter.setBrush(self.__fetchBrush())
+        self.setBackgroundStyle()
 
         for seg_rect in self.__getRects(rect):
             painter.save()

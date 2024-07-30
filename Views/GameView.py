@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QV
     QSpacerItem, QSizePolicy, QHBoxLayout, QLabel, QMessageBox
 
 from ModelView import CardGame
-from Views.CardViewV2 import CardViewV2
+from Views.CardView import CardView
 
 
 class GameWindow(QMainWindow):
@@ -105,13 +105,13 @@ class GameWindow(QMainWindow):
 
     def _initCards(self):
         for card in self.cardGame.get_draw_cards():
-            theCardView = CardViewV2(card)
+            theCardView = CardView(card)
             theCardView.setMinimumWidth(self.minWidthOfWidgets)
             theCardView.setMinimumHeight(int(self.minWidthOfWidgets // self.aspectRat))
             theCardView.onTapGesture.connect(self.onCustomSignalEmitted)
             self.card_views.append(theCardView)
 
-    def onCustomSignalEmitted(self, card: CardViewV2):
+    def onCustomSignalEmitted(self, card: CardView):
         print("Card clicked")
 
 
