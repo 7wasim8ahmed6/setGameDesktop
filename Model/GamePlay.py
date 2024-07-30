@@ -41,8 +41,9 @@ class GamePlay:
                 if len(self.__selected) == 3:
                     self.__choice_full_replace_drawn_cards()
                 else:
-                    self.__draw_cards = self.__cards[-3:]  # Take the last 3 cards
+                    new_drawn_cards = self.__cards[-3:]  # Take the last 3 cards
                     self.__cards = self.__cards[:-3]  # Remove the last 3 cards from __cards
+                    self.__draw_cards.extend(new_drawn_cards)  # Append the new cards to the existing drawn cards
 
     def choose(self, card: Card):
         select_index = self.__find_in_drawn(card)

@@ -23,3 +23,7 @@ class CardGame(Observable):
     def choose(self, card):
         self.__theGame.choose(card)
         self.notify_observers()
+
+    def draw_cards(self):
+        self.__theGame.draw_cards()
+        self.notify_observers()

@@ -82,10 +82,20 @@ class GameWindow(QMainWindow, Observer):
         horLayout = QHBoxLayout()
         horLayout.addItem(QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         pushButton = QPushButton("Hint?")
+        pushButton.clicked.connect(self.on_hint_clicked)
         horLayout.addWidget(pushButton)
         pushButton = QPushButton("Draw Cards")
+        pushButton.clicked.connect(self.on_draw_cards_clicked)
         horLayout.addWidget(pushButton)
         return horLayout
+
+    def on_draw_cards_clicked(self):
+        print("on_draw_cards_clicked pressed")
+        self.cardGame.draw_cards()
+
+
+    def on_hint_clicked(self):
+        print("on_hint_clicked pressed")
 
     def createTopView(self):
         horLayout = QHBoxLayout()
