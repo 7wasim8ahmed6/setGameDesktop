@@ -126,8 +126,8 @@ class GamePlay:
                     else:
                         self.__draw_cards.pop(index_in_drawn)
 
-            self.__selected.clear()
-            self.__matched.clear()
+        self.__selected.clear()
+        self.__matched.clear()
 
     def has_set_available(self) -> Tuple[bool, List[Card]]:
         size = len(self.__draw_cards)
