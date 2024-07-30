@@ -30,13 +30,13 @@ class CardView(QWidget):
         self.card = card
         self.is_selected = isSelected
         self.is_matched = isMatched
-        self.setObjectName("CardViewV2")
+        self.setObjectName("CardView")
         self.setMinimumSize(min_width, min_height)
 
     def setBackgroundStyle(self):
         if self.is_selected:
             self.setStyleSheet("""
-                                CardViewV2 {
+                                CardView {
                                     background-color: lightsteelblue;
                                     border: 2px solid black;
                                     border-radius: 15px;
@@ -45,7 +45,7 @@ class CardView(QWidget):
 
         if self.is_matched:
             self.setStyleSheet("""
-                                CardViewV2 {
+                                CardView {
                                     background-color: yellowgreen;
                                     border: 2px solid black;
                                     border-radius: 15px;
