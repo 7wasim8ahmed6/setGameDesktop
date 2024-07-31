@@ -9,7 +9,7 @@ from common.Card import *
 class GamePlay:
     def __init__(self):
         self.__cards = GamePlay.__createAllCards()
-        # shuffle(self.__cards)
+        shuffle(self.__cards)
         self.__draw_cards: List[Card] = self.__cards[-12:]  # Take the last 12 cards
         self.__cards: List[Card] = self.__cards[:-12]  # Remove the last 12 cards from __cards
         self.__matched: List[Card] = []
@@ -72,6 +72,9 @@ class GamePlay:
             else:
                 self.__score.deduct()
                 print(f"{self.__selected[0]},{self.__selected[1]} and {self.__selected[2]} make  no match")
+
+    def getScoreInfo(self):
+        return self.__score.get_scoring_info()
 
     def is_game_completed(self):
         return self.__game_completed

@@ -33,3 +33,10 @@ class CardGame(Observable):
 
     def getCurrentPoints(self):
         return self.__theGame.getPoints()
+
+    def startNewGame(self):
+        self.__theGame = GamePlay()
+        self.notify_observers()
+
+    def getPointsInfo(self):
+        return self.__theGame.getScoreInfo()

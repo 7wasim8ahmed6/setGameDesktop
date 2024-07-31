@@ -74,7 +74,7 @@ class GameWindow(QMainWindow, Observer):
 
     def newGame(self):
         # Logic for starting a new game
-        print("New Game started")
+        self.cardGame.startNewGame()
         # Reset the game state or implement the logic needed for a new game
         # Example: self._initCards()
 
@@ -85,8 +85,9 @@ class GameWindow(QMainWindow, Observer):
 
     def showHelp(self):
         # Show a help message box
+        info = self.cardGame.getPointsInfo()
         QMessageBox.information(self, "Help",
-                                "This is the help information for the game.This is the help information for the game.This is the help information for the game.")
+                                info)
 
     def createBottomView(self):
         horLayout = QHBoxLayout()

@@ -44,3 +44,19 @@ class Score:
         elapsed_time = time.time() - self.__start_time
         remaining_time = int(Score.PRE_DEFINED_TIME - elapsed_time)
         return max(remaining_time, 0)
+
+    def get_scoring_info(self) -> str:
+        return """
+        <html>
+            <body>
+                <ul>
+                    <li><b>Correct match:</b> 3 points.</li>
+                    <li><b>Additional consecutive matches:</b> +1 point for each consecutive correct match.</li>
+                    <li><b>Incorrect match:</b> -1 point.</li>
+                    <li><b>Time bonus:</b> Extra points based on time saved (1 point for every 30 seconds saved).</li>
+                    <li><b>Hint used:</b> -1 point if a set is available.</li>
+                    <li><b>Draw cards although a set is available:</b> -1 point.</li>
+                </ul>
+            </body>
+        </html>
+        """
