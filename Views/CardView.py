@@ -25,11 +25,13 @@ class CardView(QWidget):
         Filling.STRIPED: Qt.BrushStyle.BDiagPattern
     }
 
-    def __init__(self, card: Card, min_width, min_height, parent: Optional[QWidget] = None, isSelected=False, isMatched=False):
+    def __init__(self, card: Card, min_width, min_height, parent: Optional[QWidget] = None, isSelected=False,
+                 isMatched=False, isHint=False):
         super().__init__(parent)
         self.card = card
         self.is_selected = isSelected
         self.is_matched = isMatched
+        self.is_hint = isHint
         self.setObjectName("CardView")
         self.setMinimumSize(min_width, min_height)
         self.setBackgroundStyle()
@@ -65,7 +67,11 @@ class CardView(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         pad_val = self.PADDING
         rect = self.rect().adjusted(pad_val, pad_val, -pad_val, -pad_val)
-        # painter.fillRect(rect, QBrush(QColor('White')))
+        if self.is_hint:
+            # Fill the rect with a semi-transparent color for hint
+            painter.setBrush(QBrush(QColor(173, 216, 230, 80)))  # Light cyan with 80/255 opacity
+            painter.setPen(QPen(QColor(144, 238, 144), 2))  # Light green border with 2px width
+            painter.drawRoundedRect(rect, 10, 10)
         painter.setPen(self.__fetchPen())
         painter.setBrush(self.__fetchBrush())
 

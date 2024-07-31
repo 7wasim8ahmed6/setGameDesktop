@@ -107,6 +107,7 @@ class GameWindow(QMainWindow, Observer):
 
     def on_hint_clicked(self):
         print("on_hint_clicked pressed")
+        self.cardGame.create_hint()
 
     def createTopView(self):
         horLayout = QHBoxLayout()
@@ -136,8 +137,9 @@ class GameWindow(QMainWindow, Observer):
         for card in self.cardGame.get_draw_cards():
             is_selected = self.cardGame.isCardSelected(card)
             is_matched = self.cardGame.isCardMatched(card)
+            is_hint_card = self.cardGame.isHint(card)
             theCardView = CardView(card, self.minWidthOfWidgets,
-                                   int(self.minWidthOfWidgets // self.aspectRat), None,  is_selected, is_matched)
+                                   int(self.minWidthOfWidgets // self.aspectRat), None,  is_selected, is_matched, is_hint_card)
             theCardView.onTapGesture.connect(self.onCustomSignalEmitted)
             card_views.append(theCardView)
 
