@@ -30,3 +30,6 @@ class CardGame(Observable):
 
     def get_elapsed_time(self):
         return self.__theGame.getTimeTaken()
+
+    def getCurrentPoints(self):
+        return self.__theGame.getPoints()

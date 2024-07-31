@@ -44,6 +44,8 @@ class GameWindow(QMainWindow, Observer):
 
     def update(self, observable, *args, **kwargs):
         self.rearrangeButtons()
+        self.pointsValue.setText(f"{self.cardGame.getCurrentPoints()}")
+
     def createMenu(self):
         # Create the menu bar
         menuBar = self.menuBar()

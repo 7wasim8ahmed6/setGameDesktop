@@ -33,6 +33,9 @@ class GamePlay:
     def getTimeTaken(self):
         return self.__score.get_remaining_time()
 
+    def getPoints(self):
+        return self.__score.get_points()
+
     def get_drawn_cards(self) -> List[Card]:
         return self.__draw_cards
 
