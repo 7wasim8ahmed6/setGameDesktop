@@ -27,3 +27,6 @@ class CardGame(Observable):
     def draw_cards(self):
         self.__theGame.draw_cards()
         self.notify_observers()
+
+    def get_elapsed_time(self):
+        return self.__theGame.getTimeTaken()

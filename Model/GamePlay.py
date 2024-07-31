@@ -30,6 +30,9 @@ class GamePlay:
             for idx, (shape, number, filling, color) in enumerate(product(shapes, numbers, fillings, colors), start=1)
         ]
 
+    def getTimeTaken(self):
+        return self.__score.get_remaining_time()
+
     def get_drawn_cards(self) -> List[Card]:
         return self.__draw_cards
 

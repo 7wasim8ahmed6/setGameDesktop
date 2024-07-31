@@ -1,3 +1,4 @@
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QMainWindow, QWidget, QPushButton, QGridLayout, QVBoxLayout, QScrollArea, \
     QSpacerItem, QSizePolicy, QHBoxLayout, QLabel, QMessageBox
@@ -16,6 +17,9 @@ class GameWindow(QMainWindow, Observer):
         self.minWidthOfWidgets = min_width
         self.aspectRat = aspect_ratio
         self.cardGame.add_observer(self)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_time)
+        self.timer.start(1000)
 
         self.central_widget = QWidget()
         self.setCentralWidget(self.central_widget)
@@ -61,6 +65,10 @@ class GameWindow(QMainWindow, Observer):
         helpAction.setIcon(QIcon(':/icons/help'))
         helpAction.triggered.connect(self.showHelp)
         helpMenu.addAction(helpAction)
+
+    def update_time(self):
+        elapsed_seconds = self.cardGame.get_elapsed_time()
+        self.timeValue.setText(f"{elapsed_seconds}")
 
     def newGame(self):
         # Logic for starting a new game
@@ -111,7 +119,7 @@ class GameWindow(QMainWindow, Observer):
 
         # Time label
         lblTime = QLabel("Time: ")
-        self.timeValue = QLabel("00:00")  # Placeholder for the timer
+        self.timeValue = QLabel("60")  # Placeholder for the timer
         horLayout.addWidget(lblTime)
         horLayout.addWidget(self.timeValue)
         return horLayout
